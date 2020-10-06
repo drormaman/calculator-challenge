@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MathOperation, operationTypes } from "./MathOperation";
 import DigitButton from "./DigitButton";
 
@@ -38,6 +38,12 @@ function Calc() {
 	const [secondNum, setSecondNum] = useState("0");
 	const [operationPressed, setOperationPressed] = useState();
 
+	useEffect(() => {
+		console.log(firstNum);
+		console.log(secondNum);
+		console.log(operationPressed);
+	});
+
 	function operationClick(op) {
 		// if (op === "AC") {
 		// } else if (op === ".") {
@@ -69,14 +75,13 @@ function Calc() {
 				setOperationPressed();
 				break;
 			default:
-				if (!operationPressed) {
-					setOperationPressed(op);
-				} else {
+				if (operationPressed) {
 					setFirstNum(() =>
 						calculate(operationPressed, Number(firstNum), Number(secondNum))
 					);
 					setSecondNum("0");
 				}
+				setOperationPressed(op);
 		}
 	}
 
