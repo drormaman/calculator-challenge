@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MathOperation, operationTypes } from "./MathOperation";
 import DigitButton from "./DigitButton";
 
@@ -15,8 +15,6 @@ function calculate(operation, num1, num2) {
 		case "-":
 			return num1 - num2;
 		case "*":
-			console.log("powpow");
-
 			return num1 * num2;
 		case "/":
 			return num1 / num2;
@@ -39,36 +37,46 @@ function Calc() {
 	const [firstNum, setFirstNum] = useState("0");
 	const [secondNum, setSecondNum] = useState("0");
 	const [operationPressed, setOperationPressed] = useState();
-	const [result, setResult] = useState("");
 
-	useEffect(() => {
-		console.log("first", firstNum);
-		console.log("second", secondNum);
-		console.log("operation", operationPressed);
-	});
+	function operationClick(op) {
+		// if (op === "AC") {
+		// } else if (op === ".") {
+		// } else if (op === "=") {
+		// } else {
+		// }
 
-	function operationClick(type) {
-		if (type === "AC") {
-			setFirstNum("0");
-			setSecondNum("0");
-			setOperationPressed(null);
-		} else if (type === ".") {
-			if (operationPressed) {
-				setSecondNum(() => secondNum + type);
-			} else {
-				setFirstNum(() => firstNum + type);
-			}
-		} else if (type === "=") {
-			setResult(
-				calculate(operationPressed, Number(firstNum), Number(secondNum))
-			);
-			setFirstNum("0");
-			setSecondNum("0");
-			setOperationPressed(null);
-		} else {
-			setOperationPressed(type);
-			// setFirstNum(calculate(type, Number(firstNum), Number(secondNum)));
-			setSecondNum("0");
+		switch (op) {
+			case "AC":
+				setFirstNum("0");
+				setSecondNum("0");
+				setOperationPressed();
+				break;
+			case ".":
+				operationPressed
+					? setSecondNum(() => secondNum + op)
+					: setFirstNum(() => firstNum + op);
+				break;
+			case "=":
+				setFirstNum(() =>
+					calculate(operationPressed, Number(firstNum), Number(secondNum))
+				);
+				setOperationPressed();
+				setSecondNum("0");
+				break;
+			case "x²":
+			case "√":
+				setFirstNum(() => calculate(op, Number(firstNum), Number(secondNum)));
+				setOperationPressed();
+				break;
+			default:
+				if (!operationPressed) {
+					setOperationPressed(op);
+				} else {
+					setFirstNum(() =>
+						calculate(operationPressed, Number(firstNum), Number(secondNum))
+					);
+					setSecondNum("0");
+				}
 		}
 	}
 
@@ -91,25 +99,29 @@ function Calc() {
 	return (
 		<div className="calculator">
 			<div className="result">
-				{operationPressed === "="
-					? result
-					: operationPressed
+				{operationPressed
 					? secondNum
+					: firstNum === Infinity
+					? "Error"
 					: firstNum}
 			</div>
 			<div className="calculator-digits">
-				<DigitButton value="0" onClick={numberClick} />
-				<DigitButton value="1" onClick={numberClick} />
-				<DigitButton value="2" onClick={numberClick} />
-				<DigitButton value="3" onClick={numberClick} />
-				<DigitButton value="4" onClick={numberClick} />
-				<DigitButton value="5" onClick={numberClick} />
-				<DigitButton value="6" onClick={numberClick} />
-				<DigitButton value="7" onClick={numberClick} />
-				<DigitButton value="8" onClick={numberClick} />
-				<DigitButton value="9" onClick={numberClick} />
+				<DigitButton key="0" value="0" onClick={numberClick} />
+				<DigitButton key="1" value="1" onClick={numberClick} />
+				<DigitButton key="2" value="2" onClick={numberClick} />
+				<DigitButton key="3" value="3" onClick={numberClick} />
+				<DigitButton key="4" value="4" onClick={numberClick} />
+				<DigitButton key="5" value="5" onClick={numberClick} />
+				<DigitButton key="6" value="6" onClick={numberClick} />
+				<DigitButton key="7" value="7" onClick={numberClick} />
+				<DigitButton key="8" value="8" onClick={numberClick} />
+				<DigitButton key="9" value="9" onClick={numberClick} />
 				{operationTypes.map(operation => (
-					<MathOperation type={operation} onClick={operationClick} />
+					<MathOperation
+						key={operation}
+						type={operation}
+						onClick={operationClick}
+					/>
 				))}
 			</div>
 		</div>
